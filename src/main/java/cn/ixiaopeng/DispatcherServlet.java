@@ -62,7 +62,7 @@ public class DispatcherServlet extends HttpServlet {
                 paramsMap.put(paramName, paramValue);
             }
 
-            /*String urlStr = CodecUtil.decodeUrl(StreamUtil.getString(req.getInputStream()));
+            String urlStr = CodecUtil.decodeUrl(StreamUtil.getString(req.getInputStream()));
             if (StringUtil.isNotEmpty(urlStr)) {
                 String[] params = urlStr.split("&");
                 if (ArrayUtil.isNotEmpty(params)) {
@@ -73,7 +73,7 @@ public class DispatcherServlet extends HttpServlet {
                         }
                     }
                 }
-            }*/
+            }
 
             Params params = new Params(paramsMap);
             // 调用Method方法
