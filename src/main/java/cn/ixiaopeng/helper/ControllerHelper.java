@@ -55,4 +55,15 @@ public final class ControllerHelper {
             }
         }
     }
+
+    /**
+     * 根据请求获取Handler对象
+     * @param requestMethod 请求方法
+     * @param requestPath 请求路径
+     * @return Handler对象
+     */
+    public static Handler getHandler (String requestMethod, String requestPath) {
+        Request request = new Request(requestMethod, requestPath);
+        return REQUEST_HANDLER_MAP.get(request);
+    }
 }
