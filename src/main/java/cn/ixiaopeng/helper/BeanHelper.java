@@ -11,7 +11,7 @@ import java.util.Set;
  * Bean 助手类
  * @author venus
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class BeanHelper {
     // 定义Bean映射（Bean类和实例之间的映射）
@@ -40,5 +40,14 @@ public final class BeanHelper {
             throw new RuntimeException("Can not get bean by class: " + cls);
         }
         return CastUtil.cast(BEAN_MAP.get(cls));
+    }
+
+    /**
+     * 设置Bean实例
+     * @param cls 类类型
+     * @param object 类实例
+     */
+    public static void setBean (Class<?> cls, Object object) {
+        BEAN_MAP.put(cls, object);
     }
 }

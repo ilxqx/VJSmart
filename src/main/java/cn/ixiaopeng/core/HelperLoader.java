@@ -1,16 +1,13 @@
 package cn.ixiaopeng.core;
 
-import cn.ixiaopeng.helper.BeanHelper;
-import cn.ixiaopeng.helper.ClassHelper;
-import cn.ixiaopeng.helper.ControllerHelper;
-import cn.ixiaopeng.helper.IocHelper;
+import cn.ixiaopeng.helper.*;
 import cn.ixiaopeng.utils.ClassUtil;
 
 /**
  * 加载Helper
  * @author venus
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class HelperLoader {
 
@@ -21,6 +18,7 @@ public final class HelperLoader {
         Class<?>[] classList = {
                 ClassHelper.class,
                 BeanHelper.class,
+                AopHelper.class,
                 IocHelper.class,
                 ControllerHelper.class
         };
