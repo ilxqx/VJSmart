@@ -2,3 +2,4 @@
 .idea/
 *.iml
 target/
+src/test/java/cn/ixiaopeng/test/

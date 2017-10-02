@@ -4,6 +4,7 @@ import cn.ixiaopeng.vj.smart.annotation.Aspect;
 import cn.ixiaopeng.vj.smart.proxy.AspectProxy;
 import cn.ixiaopeng.vj.smart.proxy.Proxy;
 import cn.ixiaopeng.vj.smart.proxy.ProxyManager;
+import cn.ixiaopeng.vj.smart.proxy.TransactionProxy;
 import cn.ixiaopeng.vj.smart.utils.CastUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import java.util.*;
  * 方法拦截（AOP）助手类
  * @author venus
  * @since 1.1.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class AopHelper {
     // 日志类
@@ -56,6 +57,17 @@ public final class AopHelper {
      */
     private static Map<Class<?>, Set<Class<?>>> getProxyMap () throws Exception {
         Map<Class<?>, Set<Class<?>>> proxyMap = new HashMap<Class<?>, Set<Class<?>>>();
+        addAspectProxy(proxyMap);
+        addTransProxy(proxyMap);
+        return proxyMap;
+    }
+
+    /**
+     * 添加切面代理
+     * @param proxyMap 代理Map
+     * @throws Exception 抛出异常
+     */
+    private static void addAspectProxy (Map<Class<?>, Set<Class<?>>> proxyMap) throws Exception {
         Set<Class<?>> proxyClassSet = ClassHelper.getClassSetBySuper(AspectProxy.class);
         for (Class<?> proxyClass : proxyClassSet) {
             if (proxyClass.isAnnotationPresent(Aspect.class)) {
@@ -64,7 +76,15 @@ public final class AopHelper {
                 proxyMap.put(proxyClass, targetClassSet);
             }
         }
-        return proxyMap;
+    }
+
+    /**
+     * 添加事务代理
+     * @param proxyMap 代理Map
+     */
+    private static void addTransProxy (Map<Class<?>, Set<Class<?>>> proxyMap) {
+        Set<Class<?>> serviceClassSet = ClassHelper.getServiceClassSet();
+        proxyMap.put(TransactionProxy.class, serviceClassSet);
     }
 
     /**

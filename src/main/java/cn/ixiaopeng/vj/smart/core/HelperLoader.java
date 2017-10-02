@@ -7,7 +7,7 @@ import cn.ixiaopeng.vj.smart.utils.ClassUtil;
  * 加载Helper
  * @author venus
  * @since 1.0.0
- * @version 1.1.0
+ * @version 1.1.1
  */
 public final class HelperLoader {
 
@@ -20,6 +20,7 @@ public final class HelperLoader {
                 BeanHelper.class,
                 AopHelper.class,
                 IocHelper.class,
+                DbHelper.class,
                 ControllerHelper.class
         };
         for (Class<?> cls : classList) {
