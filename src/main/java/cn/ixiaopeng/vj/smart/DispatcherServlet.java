@@ -24,7 +24,7 @@ import java.util.Map;
  * 请求转发
  * @author venus
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 @WebServlet(urlPatterns = "/*", loadOnStartup = 0)
 public class DispatcherServlet extends HttpServlet {
@@ -78,7 +78,18 @@ public class DispatcherServlet extends HttpServlet {
             Params params = new Params(paramsMap);
             // 调用Method方法
             Method method = handler.getMethod();
-            Object result = ReflectionUtil.invokeMethod(controllerInstance, method, params);
+            Class<?>[] types = method.getParameterTypes();
+            Object[] arguments = new Object[method.getParameterCount()];
+            int index = 0;
+            // 方法参数依赖注入
+            for (Class<?> type : types) {
+                if (type.equals(Params.class)) {
+                    arguments[index++] = params;
+                } else {
+                    arguments[index++] = null;
+                }
+            }
+            Object result = ReflectionUtil.invokeMethod(controllerInstance, method, arguments);
             // 处理方法返回值
             if (result instanceof View) {
                 // 返回JSP页面
