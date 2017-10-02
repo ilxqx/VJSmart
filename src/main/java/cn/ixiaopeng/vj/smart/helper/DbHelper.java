@@ -1,6 +1,5 @@
 package cn.ixiaopeng.vj.smart.helper;
 
-import cn.ixiaopeng.vj.smart.utils.PropertiesUtil;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -41,17 +40,11 @@ public final class DbHelper {
         CONNECTION_HOLDER = new ThreadLocal<Connection>();
         QUERY_RUNNER = new QueryRunner();
 
-        PropertiesUtil.Parser parser = PropertiesUtil.loadProps("config.properties");
-        String driver = parser.getString("vj.smart.jdbc.driver");
-        String url = parser.getString("vj.smart.jdbc.url");
-        String username = parser.getString("vj.smart.jdbc.username");
-        String password = parser.getString("vj.smart.jdbc.password");
-
         DATA_SOURCE = new BasicDataSource();
-        DATA_SOURCE.setDriverClassName(driver);
-        DATA_SOURCE.setUrl(url);
-        DATA_SOURCE.setUsername(username);
-        DATA_SOURCE.setPassword(password);
+        DATA_SOURCE.setDriverClassName(ConfigHelper.getJdbcDriver());
+        DATA_SOURCE.setUrl(ConfigHelper.getJdbcUrl());
+        DATA_SOURCE.setUsername(ConfigHelper.getJdbcUsername());
+        DATA_SOURCE.setPassword(ConfigHelper.getJdbcPassword());
     }
 
     /**
