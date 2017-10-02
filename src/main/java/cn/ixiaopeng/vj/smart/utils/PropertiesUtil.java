@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -125,6 +128,21 @@ public final class PropertiesUtil {
                 value = CastUtil.castBoolean(this.properties.getProperty(key));
             }
             return value;
+        }
+
+        /**
+         * 获取所有的键值对
+         * @return Map
+         */
+        public Map<String, Object> getMap () {
+            Map<String, Object> map = new HashMap<String, Object>();
+            Enumeration<?> enumeration = properties.propertyNames();
+            while (enumeration.hasMoreElements()) {
+                Object key = enumeration.nextElement();
+                String keyStr = CastUtil.cast(key);
+                map.put(keyStr, getString(keyStr));
+            }
+            return map;
         }
     }
 }

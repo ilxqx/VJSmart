@@ -1,6 +1,8 @@
 package cn.ixiaopeng.vj.smart.core;
 
+import cn.ixiaopeng.vj.smart.helper.ConfigHelper;
 import cn.ixiaopeng.vj.smart.utils.CastUtil;
+import cn.ixiaopeng.vj.smart.utils.PropertiesUtil;
 
 import java.util.Map;
 
@@ -8,7 +10,7 @@ import java.util.Map;
  * 请求参数对象
  * @author venus
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class Params {
     // 参数Map
@@ -20,6 +22,8 @@ public class Params {
      */
     public Params (Map<String, Object> paramMap) {
         this.paramMap = paramMap;
+        PropertiesUtil.Parser parser = PropertiesUtil.loadProps(ConfigHelper.getAppViewReplaceStrFileName());
+        this.paramMap.putAll(parser.getMap());
     }
 
     /**

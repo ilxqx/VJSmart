@@ -6,7 +6,7 @@ import cn.ixiaopeng.vj.smart.utils.PropertiesUtil;
  * 配置文件助手类
  * @author venus
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class ConfigHelper {
     // 整个应用配置加载项
@@ -66,5 +66,9 @@ public final class ConfigHelper {
      */
     public static String getAppAssetPath () {
         return CONFIG_PROPERTIES.getString(ConfigConstant.APP_ASSET_PATH, "/asset/");
+    }
+
+    public static String getAppViewReplaceStrFileName () {
+        return CONFIG_PROPERTIES.getString(ConfigConstant.APP_VIEW_REPLACE_STR_FILE_NAME, "view.replace.str.properties");
     }
 }

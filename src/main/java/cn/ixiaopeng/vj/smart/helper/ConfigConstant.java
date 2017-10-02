@@ -4,7 +4,7 @@ package cn.ixiaopeng.vj.smart.helper;
  * 配置常量类
  * @author venus
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public interface ConfigConstant {
     // 配置文件名
@@ -20,4 +20,5 @@ public interface ConfigConstant {
     String APP_BASE_PACKAGE = "vj.smart.app.basePackage";
     String APP_JSP_PATH = "vj.smart.app.jspPath";
     String APP_ASSET_PATH = "vj.smart.app.assetPath";
+    String APP_VIEW_REPLACE_STR_FILE_NAME = "vj.smart.app.viewReplaceStrFileName";
 }
