@@ -34,17 +34,17 @@ public final class PropertiesUtil {
         } catch (FileNotFoundException e) {
             LOGGER.error(fileName + " file is not found", e);
         } catch (IOException e) {
-            LOGGER.error("load properties file failure", e);
+            LOGGER.error("Load properties file failure", e);
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    LOGGER.error("close input stream failure", e);
+                    LOGGER.error("Close input stream failure", e);
                 }
             }
         }
-        return new Parser(properties);
+        return properties == null ? null : new Parser(properties);
     }
 
     /**

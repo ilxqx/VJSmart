@@ -1,8 +1,6 @@
 package cn.ixiaopeng.vj.smart.core;
 
-import cn.ixiaopeng.vj.smart.helper.ConfigHelper;
 import cn.ixiaopeng.vj.smart.utils.CastUtil;
-import cn.ixiaopeng.vj.smart.utils.PropertiesUtil;
 
 import java.util.Map;
 
@@ -22,8 +20,6 @@ public class Params {
      */
     public Params (Map<String, Object> paramMap) {
         this.paramMap = paramMap;
-        PropertiesUtil.Parser parser = PropertiesUtil.loadProps(ConfigHelper.getAppViewReplaceStrFileName());
-        this.paramMap.putAll(parser.getMap());
     }
 
     /**

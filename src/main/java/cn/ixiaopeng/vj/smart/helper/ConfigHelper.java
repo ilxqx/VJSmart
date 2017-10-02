@@ -10,8 +10,17 @@ import cn.ixiaopeng.vj.smart.utils.PropertiesUtil;
  */
 public final class ConfigHelper {
     // 整个应用配置加载项
-    private static final PropertiesUtil.Parser CONFIG_PROPERTIES = PropertiesUtil.loadProps(ConfigConstant.CONFIG_FILE);
+    private static final PropertiesUtil.Parser CONFIG_PROPERTIES;
 
+    /**
+     * 静态初始化块
+     */
+    static {
+        CONFIG_PROPERTIES = PropertiesUtil.loadProps(ConfigConstant.CONFIG_FILE);
+        if (CONFIG_PROPERTIES == null) {
+            throw new RuntimeException("Config file load failure and app can't startup");
+        }
+    }
     /**
      * 获取jdbc驱动
      * @return 返回jdbc驱动类名

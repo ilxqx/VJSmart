@@ -1,5 +1,8 @@
 package cn.ixiaopeng.vj.smart.core;
 
+import cn.ixiaopeng.vj.smart.helper.ConfigHelper;
+import cn.ixiaopeng.vj.smart.utils.PropertiesUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +26,10 @@ public class View {
     public View (String path) {
         this.path = path;
         dataModel = new HashMap<String, Object>();
+        PropertiesUtil.Parser parser = PropertiesUtil.loadProps(ConfigHelper.getAppViewReplaceStrFileName());
+        if (parser != null) {
+            dataModel.putAll(parser.getMap());
+        }
     }
 
     /**
