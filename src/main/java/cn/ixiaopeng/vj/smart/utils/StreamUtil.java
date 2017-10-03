@@ -3,16 +3,13 @@ package cn.ixiaopeng.vj.smart.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * 流操作工具类
  * @author venus
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class StreamUtil {
     // 日志类
@@ -36,5 +33,31 @@ public final class StreamUtil {
             throw new RuntimeException(e);
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * 将输入流复制到输出流
+     * @param inputStream 输入流
+     * @param outputStream 输出流
+     */
+    public static void copyStream (InputStream inputStream, OutputStream outputStream) {
+        try {
+            int length;
+            byte[] buffer = new byte[4 * 1024];
+            while ((length = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                outputStream.write(buffer, 0, length);
+            }
+            outputStream.flush();
+        } catch (IOException e) {
+            LOGGER.error("Copy stream failure", e);
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                inputStream.close();
+                outputStream.close();
+            } catch (IOException e) {
+                LOGGER.error("Close stream failure", e);
+            }
+        }
     }
 }

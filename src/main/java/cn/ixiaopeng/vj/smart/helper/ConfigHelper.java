@@ -6,7 +6,7 @@ import cn.ixiaopeng.vj.smart.utils.PropertiesUtil;
  * 配置文件助手类
  * @author venus
  * @since 1.0.0
- * @version 1.1.0
+ * @version 1.2.0
  */
 public final class ConfigHelper {
     // 整个应用配置加载项
@@ -77,7 +77,19 @@ public final class ConfigHelper {
         return CONFIG_PROPERTIES.getString(ConfigConstant.APP_ASSET_PATH, "/asset/");
     }
 
+    /**
+     * 获取应用视图替换文件名
+     * @return String 文件名
+     */
     public static String getAppViewReplaceStrFileName () {
         return CONFIG_PROPERTIES.getString(ConfigConstant.APP_VIEW_REPLACE_STR_FILE_NAME, "view.replace.str.properties");
+    }
+
+    /**
+     * 获取文件上传最大限制（默认为10M）
+     * @return int
+     */
+    public static int getAppUploadLimit () {
+        return CONFIG_PROPERTIES.getInt(ConfigConstant.APP_UPLOAD_LIMIT, 10);
     }
 }

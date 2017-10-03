@@ -6,7 +6,7 @@
 
     <groupId>cn.ixiaopeng</groupId>
     <artifactId>vj-smart</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -102,6 +102,13 @@
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>3.2.5</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.3.3</version>
         </dependency>
 
     </dependencies>
