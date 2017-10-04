@@ -56,6 +56,8 @@ public class StartupHelper {
         ReflectionUtil.invokeMethod(null, Session.class.getDeclaredMethod("init", HttpSession.class), request.getSession());
         // 初始化Cookie
         ReflectionUtil.invokeMethod(null, Cookie.class.getDeclaredMethod("init", HttpServletRequest.class, HttpServletResponse.class), request, response);
+        // 初始化ServletApi
+        ReflectionUtil.invokeMethod(null, ServletApi.class.getDeclaredMethod("init", HttpServletRequest.class, HttpServletResponse.class), request, response);
         try {
             // 获取请求方法与请求路径
             String requestMethod = request.getMethod().toLowerCase();
@@ -106,6 +108,7 @@ public class StartupHelper {
         } finally {
             ReflectionUtil.invokeMethod(null, Session.class.getDeclaredMethod("destroy"));
             ReflectionUtil.invokeMethod(null, Cookie.class.getDeclaredMethod("destroy"));
+            ReflectionUtil.invokeMethod(null, ServletApi.class.getDeclaredMethod("destroy"));
         }
     }
 
