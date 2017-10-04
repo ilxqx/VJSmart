@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
@@ -21,7 +22,7 @@ import java.util.Map;
  * 整个框架启动助手
  * @author venus
  * @since 1.3.0
- * @version 1.0.0
+ * @version 1.2.0
  */
 public class StartupHelper {
     /**
@@ -50,48 +51,61 @@ public class StartupHelper {
      * @throws IOException 抛出IO异常
      * @throws ServletException 抛出Servlet异常
      */
-    public static void dispatcher (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        // 获取请求方法与请求路径
-        String requestMethod = request.getMethod().toLowerCase();
-        String requestPath = request.getPathInfo();
-        // 跳过favicon.icon
-        if (requestPath.equals("/favicon.ico")) {
-            return;
-        }
-        // 获取Method处理器
-        Handler handler = ControllerHelper.getHandler(requestMethod, requestPath);
-        if (handler != null) {
-            // 获取Controller类及其实例
-            Class<?> controllerClass = handler.getControllerClass();
-            Object controllerInstance = BeanHelper.getBean(controllerClass);
-            // 创建请求参数
-            Params params;
-            if (UploaderHelper.isMultipart(request)) {
-                params = UploaderHelper.createParams(request);
-            } else {
-                params = RequestHelper.createParams(request);
+    public static void dispatcher (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, NoSuchMethodException {
+        // 初始化Session
+        ReflectionUtil.invokeMethod(null, Session.class.getDeclaredMethod("init", HttpSession.class), request.getSession());
+        // 初始化Cookie
+        ReflectionUtil.invokeMethod(null, Cookie.class.getDeclaredMethod("init", HttpServletRequest.class, HttpServletResponse.class), request, response);
+        try {
+            // 获取请求方法与请求路径
+            String requestMethod = request.getMethod().toLowerCase();
+            String requestPath = request.getPathInfo();
+            // 跳过favicon.icon
+            if (requestPath.equals("/favicon.ico")) {
+                return;
             }
-            // 调用Method方法
-            Method method = handler.getMethod();
-            Class<?>[] types = method.getParameterTypes();
-            Object[] arguments = new Object[method.getParameterCount()];
-            int index = 0;
-            // 方法参数依赖注入
-            for (Class<?> type : types) {
-                if (type.equals(Params.class)) {
-                    arguments[index++] = params;
+            // 获取Method处理器
+            Handler handler = ControllerHelper.getHandler(requestMethod, requestPath);
+            if (handler != null) {
+                // 获取Controller类及其实例
+                Class<?> controllerClass = handler.getControllerClass();
+                Object controllerInstance = BeanHelper.getBean(controllerClass);
+                // 创建请求参数
+                Params params;
+                if (UploaderHelper.isMultipart(request)) {
+                    params = UploaderHelper.createParams(request);
                 } else {
-                    arguments[index++] = null;
+                    params = RequestHelper.createParams(request);
+                }
+                // 调用Method方法
+                Method method = handler.getMethod();
+                Class<?>[] types = method.getParameterTypes();
+                Object[] arguments = new Object[method.getParameterCount()];
+                int index = 0;
+                // 方法参数依赖注入
+                for (Class<?> type : types) {
+                    if (type.equals(Params.class)) {
+                        arguments[index++] = params;
+                    } else if (type.equals(HttpServletRequest.class)) {
+                        arguments[index++] = request;
+                    } else if (type.equals(HttpServletResponse.class)) {
+                        arguments[index++] = response;
+                    } else {
+                        arguments[index++] = null;
+                    }
+                }
+                // 方法调用
+                Object result = ReflectionUtil.invokeMethod(controllerInstance, method, arguments);
+                // 处理结果
+                if (result instanceof View) {
+                    handleViewResult(CastUtil.cast(result), request, response);
+                } else if (result instanceof JsonData) {
+                    handleJsonDataResult(CastUtil.cast(result), request, response);
                 }
             }
-            // 方法调用
-            Object result = ReflectionUtil.invokeMethod(controllerInstance, method, arguments);
-            // 处理结果
-            if (result instanceof View) {
-                handleViewResult(CastUtil.cast(result), request, response);
-            } else if (result instanceof JsonData) {
-                handleJsonDataResult(CastUtil.cast(result), request, response);
-            }
+        } finally {
+            ReflectionUtil.invokeMethod(null, Session.class.getDeclaredMethod("destroy"));
+            ReflectionUtil.invokeMethod(null, Cookie.class.getDeclaredMethod("destroy"));
         }
     }
 

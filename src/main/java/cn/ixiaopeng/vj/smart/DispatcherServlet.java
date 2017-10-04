@@ -24,6 +24,10 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        StartupHelper.dispatcher(req, resp);
+        try {
+            StartupHelper.dispatcher(req, resp);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
