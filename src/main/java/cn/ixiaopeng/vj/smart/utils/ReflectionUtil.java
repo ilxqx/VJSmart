@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * 反射工具类
  * @author venus
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class ReflectionUtil {
     // 日志类
@@ -64,6 +64,22 @@ public final class ReflectionUtil {
             field.set(object, value);
         } catch (IllegalAccessException e) {
             LOGGER.error("Set field failure", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取属性成员的值
+     * @param object 目标对象
+     * @param field 属性反射对象
+     * @return 值
+     */
+    public static Object getField (Object object, Field field) {
+        try {
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (IllegalAccessException e) {
+            LOGGER.error("Get field failure", e);
             throw new RuntimeException(e);
         }
     }

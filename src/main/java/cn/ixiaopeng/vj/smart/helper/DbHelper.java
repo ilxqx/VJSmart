@@ -1,5 +1,8 @@
 package cn.ixiaopeng.vj.smart.helper;
 
+import cn.ixiaopeng.vj.smart.annotation.Entity;
+import cn.ixiaopeng.vj.smart.utils.CastUtil;
+import cn.ixiaopeng.vj.smart.utils.ReflectionUtil;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -12,9 +15,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +26,7 @@ import java.util.Map;
  * 数据库操作助手类
  * @author venus
  * @since 1.2.0
- * @version 1.0.0
+ * @version 1.1.0
  */
 public final class DbHelper {
     /**
@@ -196,71 +200,98 @@ public final class DbHelper {
      * @param entityClass 实体类的类
      * @return 返回表名
      */
-    private static String getTableName (Class<?> entityClass) {
-        return entityClass.getSimpleName();
+    public static String getTableName (Class<?> entityClass) {
+        if (entityClass.isAnnotationPresent(Entity.class)) {
+            return entityClass.getAnnotation(Entity.class).value();
+        }
+        return null;
     }
 
     /**
      * 插入实体
-     * @param entityClass 实体类的类
-     * @param fieldMap 属性map
+     * @param entityObj 实体类的对象
      * @param <T> 实体类型
      * @return 返回是否插入成功
      */
-    public static <T> boolean insertEntity (Class<T> entityClass, Map<String, Object> fieldMap) {
-        if (fieldMap.isEmpty()) {
-            LOGGER.error("Can not insert entity: fieldMap is empty");
-            return false;
-        }
-        String sql = "INSERT INTO " + getTableName(entityClass) + " ";
-        StringBuilder columns = new StringBuilder("(");
+    public static <T> boolean insertEntity (T entityObj, String tableName) {
+        Class<T> entityClass = CastUtil.cast(entityObj.getClass());
+        Field[] fields = entityClass.getDeclaredFields();
+        String sql = "INSERT INTO `" + tableName + "` ";
+        StringBuilder columns = new StringBuilder("(`");
         StringBuilder values = new StringBuilder("(");
-        for (String fieldName : fieldMap.keySet()) {
-            columns.append(fieldName).append(", ");
-            values.append("?, ");
+        List<Object> params = new LinkedList<Object>();
+        for (Field field : fields) {
+            String key = field.getName();
+            if (key.equals("id")) {
+                continue;
+            }
+            Object value = ReflectionUtil.getField(entityObj, field);
+            if (value != null) {
+                columns.append(key).append("`, `");
+                values.append("?, ");
+                params.add(value);
+            }
         }
         columns.replace(columns.lastIndexOf(", "), columns.length(), ")");
         values.replace(values.lastIndexOf(", "), values.length(), ")");
         sql += columns + " VALUES " + values;
-        Object[] params = fieldMap.values().toArray();
-        return executeUpdate(sql, params) == 1;
+        return executeUpdate(sql, params.toArray()) == 1;
     }
 
     /**
      * 更新实体
-     * @param entityClass 实体类的类
-     * @param id 记录的id
-     * @param fieldMap 实体属性Map
+     * @param entityObj 实体类的类
      * @param <T> 实体类型
      * @return 返回是否更新成功
      */
-    public static <T> boolean updateEntity (Class<T> entityClass, long id, Map<String, Object> fieldMap) {
-        if (fieldMap.isEmpty()) {
-            LOGGER.error("Can not update entity: fieldMap is empty");
+    public static <T> boolean updateEntity (T entityObj, String tableName) {
+        Class<T> entityClass = CastUtil.cast(entityObj.getClass());
+        Field[] fields = entityClass.getDeclaredFields();
+        String sql = "UPDATE `" + tableName + "` SET `";
+        StringBuilder columns = new StringBuilder();
+        List<Object> params = new LinkedList<Object>();
+        long id = -1;
+        for (Field field : fields) {
+            String key = field.getName();
+            Object value = ReflectionUtil.getField(entityObj, field);
+            if (value != null) {
+                if (key.equals("id")) {
+                    id = CastUtil.castLong(value);
+                    continue;
+                }
+                columns.append(key).append("` = ?, `");
+                params.add(value);
+            }
+        }
+        sql += columns.substring(0, columns.lastIndexOf(", ")) + " WHERE `id` = ?";
+        if (id == -1) {
             return false;
         }
-        String sql = "UPDATE " + getTableName(entityClass) + " SET ";
-        StringBuilder columns = new StringBuilder();
-        for (String fieldName : fieldMap.keySet()) {
-            columns.append(fieldName).append(" = ?, ");
-        }
-        sql += columns.substring(0, columns.lastIndexOf(", ")) + " WHERE id = ?";
-        List<Object> paramList = new ArrayList<Object>();
-        paramList.addAll(fieldMap.values());
-        paramList.add(id);
-        return executeUpdate(sql, paramList.toArray()) == 1;
+        params.add(id);
+        return executeUpdate(sql, params.toArray()) == 1;
     }
 
     /**
      * 删除实体
-     * @param entityClass 实体类的类
-     * @param id 记录的id
+     * @param entityObj 实体类的类
      * @param <T> 实体类型
      * @return 返回是否删除成功
      */
-    public static <T> boolean deleteEntity (Class<T> entityClass, long id) {
-        String sql = "DELETE FROM " + getTableName(entityClass) + " WHERE id = ?";
-        return executeUpdate(sql, id) == 1;
+    public static <T> boolean deleteEntity (T entityObj, String tableName) {
+        Class<T> entityClass = CastUtil.cast(entityObj.getClass());
+        Field[] fields = entityClass.getDeclaredFields();
+        String sql = "DELETE FROM `" + tableName + "` WHERE `id` = ?";
+        long id = -1;
+        for (Field field : fields) {
+            if (field.getName().equals("id")) {
+                Object value = ReflectionUtil.getField(entityObj, field);
+                if (value != null) {
+                    id = CastUtil.castLong(value);
+                    break;
+                }
+            }
+        }
+        return id != -1 && executeUpdate(sql, id) == 1;
     }
 
     public static void executeSqlFile (String sqlFilePath) {
