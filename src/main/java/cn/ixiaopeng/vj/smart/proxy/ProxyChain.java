@@ -1,5 +1,6 @@
 package cn.ixiaopeng.vj.smart.proxy;
 
+import cn.ixiaopeng.vj.smart.core.ServletApi;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
@@ -67,8 +68,10 @@ public class ProxyChain {
         Object result;
         if (proxyIndex < proxyList.size()) {
             result = proxyList.get(proxyIndex++).doProxy(this);
-        } else {
+        } else if (!ServletApi.getResponse().isCommitted()) {
             result = methodProxy.invokeSuper(targetObject, targetMethodParams);
+        } else {
+            result = null;
         }
         return result;
     }

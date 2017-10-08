@@ -1,8 +1,10 @@
 package cn.ixiaopeng.vj.smart.proxy;
 
+import cn.ixiaopeng.vj.smart.core.ServletApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
@@ -24,6 +26,7 @@ public abstract class AspectProxy implements Proxy {
     @Override
     public final Object doProxy (ProxyChain proxyChain) throws Throwable {
         Object result = null;
+        HttpServletResponse response = ServletApi.getResponse();
         Class<?> cls = proxyChain.getTargetClass();
         Method method = proxyChain.getTargetMethod();
         Object[] params = proxyChain.getTargetMethodParams();
@@ -32,10 +35,17 @@ public abstract class AspectProxy implements Proxy {
         try {
             if (intercept(cls, method, params)) {
                 // 方法执行前代理
-                before(cls, method, params);
-                result = proxyChain.doProxyChain();
+                if (!response.isCommitted()) {
+                    before(cls, method, params);
+                }
+                if (!response.isCommitted()) {
+                    result = proxyChain.doProxyChain();
+                }
+
                 // 方法执行后代理
-                after(cls, method, params, result);
+                if (!response.isCommitted()) {
+                    after(cls, method, params, result);
+                }
             } else {
                 // 不拦截的方法不需要代理
                 result = proxyChain.doProxyChain();
