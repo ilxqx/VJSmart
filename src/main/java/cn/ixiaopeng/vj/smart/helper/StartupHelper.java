@@ -99,6 +99,9 @@ public class StartupHelper {
                 // 方法调用
                 Object result = ReflectionUtil.invokeMethod(controllerInstance, method, arguments);
                 // 处理结果
+                if (response.isCommitted()) {
+                    return;
+                }
                 if (result instanceof View) {
                     handleViewResult(CastUtil.cast(result), request, response);
                 } else if (result instanceof JsonData) {
