@@ -20,7 +20,10 @@ public class Cookie {
     //初始化Cookie
     private static void init (HttpServletRequest request, HttpServletResponse response) {
         List<javax.servlet.http.Cookie> cookieList = new ArrayList<javax.servlet.http.Cookie>();
-        cookieList.addAll(Arrays.asList(request.getCookies()));
+        javax.servlet.http.Cookie[] cookies = request.getCookies();
+        if (ArrayUtil.isNotEmpty(cookies)) {
+        	cookieList.addAll(Arrays.asList(cookies));
+        }
         COOKIE.set(cookieList);
         RESPONSE.set(response);
     }
