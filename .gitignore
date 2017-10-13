@@ -1,5 +1,4 @@
 # idea
-.idea/
+.idea
 *.iml
-target/
-src/test/java/cn/ixiaopeng/test/
+target
