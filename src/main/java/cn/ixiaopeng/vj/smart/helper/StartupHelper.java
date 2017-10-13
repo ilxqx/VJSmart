@@ -63,7 +63,7 @@ public class StartupHelper {
             String requestMethod = request.getMethod().toLowerCase();
             String requestPath = request.getPathInfo();
             // 跳过favicon.icon
-            if (requestPath.equals("/favicon.ico")) {
+            if (requestPath != null && requestPath.equals("/favicon.ico")) {
                 return;
             }
             // 获取Method处理器
@@ -107,6 +107,13 @@ public class StartupHelper {
                 } else if (result instanceof JsonData) {
                     handleJsonDataResult(CastUtil.cast(result), request, response);
                 }
+            } else {
+            	response.setContentType("text/html;charset=utf8");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter printWriter = response.getWriter();
+                printWriter.write("<h1>404 Not found!</h1>");
+                printWriter.flush();
+                printWriter.close();
             }
         } finally {
             ReflectionUtil.invokeMethod(null, Session.class.getDeclaredMethod("destroy"));
