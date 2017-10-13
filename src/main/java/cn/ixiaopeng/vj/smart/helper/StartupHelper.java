@@ -63,7 +63,7 @@ public class StartupHelper {
             String requestMethod = request.getMethod().toLowerCase();
             String requestPath = request.getPathInfo();
             // 跳过favicon.icon
-            if (requestPath.equals("/favicon.ico")) {
+            if (requestPath != null && requestPath.equals("/favicon.ico")) {
                 return;
             }
             // 获取Method处理器
