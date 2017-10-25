@@ -1,5 +1,7 @@
 package cn.ixiaopeng.vj.smart.core;
 
+import cn.ixiaopeng.vj.smart.utils.ArrayUtil;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
