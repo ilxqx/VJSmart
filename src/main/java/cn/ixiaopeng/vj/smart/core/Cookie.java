@@ -4,6 +4,9 @@ import cn.ixiaopeng.vj.smart.utils.ArrayUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.ixiaopeng.vj.smart.utils.ArrayUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
