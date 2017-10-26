@@ -7,6 +7,7 @@
     <groupId>cn.ixiaopeng</groupId>
     <artifactId>vj-smart</artifactId>
     <version>1.5.1</version>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

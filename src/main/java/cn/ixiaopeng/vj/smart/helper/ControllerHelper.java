@@ -37,7 +37,7 @@ public final class ControllerHelper {
                             cn.ixiaopeng.vj.smart.annotation.Method annotationMethod = method.getAnnotation(cn.ixiaopeng.vj.smart.annotation.Method.class);
                             String mapping = annotationMethod.value();
                             // 验证URL规则
-                            if (mapping.matches("\\w{3,6}:/\\w*")) {
+                            if (mapping.matches("\\w{3,6}:(/\\w*)+")) {
                                 String[] strArr = mapping.split(":");
                                 if (ArrayUtil.isNotEmpty(strArr) && strArr.length == 2) {
                                     // 获取请求方法与请求路径
