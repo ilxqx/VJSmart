@@ -1,5 +1,6 @@
 package cn.ixiaopeng.vj.smart.helper;
 
+import cn.ixiaopeng.vj.smart.annotation.Entity;
 import cn.ixiaopeng.vj.smart.core.*;
 import cn.ixiaopeng.vj.smart.utils.CastUtil;
 import cn.ixiaopeng.vj.smart.utils.JsonUtil;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -51,7 +53,7 @@ public class StartupHelper {
      * @throws IOException 抛出IO异常
      * @throws ServletException 抛出Servlet异常
      */
-    public static void dispatcher (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, NoSuchMethodException {
+    public static void dispatcher (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // 初始化Session
         ReflectionUtil.invokeMethod(null, Session.class.getDeclaredMethod("init", HttpSession.class), request.getSession());
         // 初始化Cookie
@@ -92,6 +94,8 @@ public class StartupHelper {
                         arguments[index++] = request;
                     } else if (type.equals(HttpServletResponse.class)) {
                         arguments[index++] = response;
+                    } else if (type.isAnnotationPresent(Entity.class)) {
+                        arguments[index++] = handleEntityObj(type, params);
                     } else {
                         arguments[index++] = null;
                     }
@@ -120,6 +124,32 @@ public class StartupHelper {
             ReflectionUtil.invokeMethod(null, Cookie.class.getDeclaredMethod("destroy"));
             ReflectionUtil.invokeMethod(null, ServletApi.class.getDeclaredMethod("destroy"));
         }
+    }
+
+    /**
+     * 将前台传来的表单属性赋值为对象属性
+     * @param cls Class 对象类型
+     * @param params Params 参数对象
+     * @param <T> 类型
+     * @return 实例对象
+     * @throws IllegalAccessException 非法访问异常
+     * @throws InstantiationException 实例化异常
+     */
+    private static <T> T handleEntityObj (Class<T> cls, Params params) throws IllegalAccessException, InstantiationException {
+        // 获取实例
+        T instance = cls.newInstance();
+        // 获取字段反射
+        Field[] fields = cls.getDeclaredFields();
+        Map<String, Object> map = params.getFieldMap();
+        for (Field field : fields) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                // 如果属性匹配则进行赋值
+                if (entry.getKey().equals(field.getName())) {
+                    field.set(instance, entry.getValue());
+                }
+            }
+        }
+        return instance;
     }
 
     /**

@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static cn.ixiaopeng.vj.smart.helper.StartupHelper.dispatcher;
+
 /**
  * 请求转发
  * @author venus
@@ -25,9 +27,13 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            StartupHelper.dispatcher(req, resp);
+            dispatcher(req, resp);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
         }
     }
 }
