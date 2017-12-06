@@ -142,6 +142,8 @@ public class StartupHelper {
         Field[] fields = cls.getDeclaredFields();
         Map<String, Object> map = params.getFieldMap();
         for (Field field : fields) {
+            // 让它能被访问
+            field.setAccessible(true);
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 // 如果属性匹配则进行赋值
                 if (entry.getKey().equals(field.getName())) {
